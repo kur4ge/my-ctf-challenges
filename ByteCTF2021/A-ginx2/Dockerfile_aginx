@@ -1,0 +1,26 @@
+FROM node:16 AS front
+COPY front/ /build/
+WORKDIR /build
+
+RUN npm install --registry=https://registry.npmmirror.com 
+RUN npm run build
+RUN rm dist/static/js/*.map
+
+FROM golang AS a-ginx
+COPY a-ginx/ /build/
+WORKDIR /build
+
+RUN go env -w GO111MODULE=on && \
+    go env -w GOPROXY=https://goproxy.cn,direct && \
+    go mod download && \
+    sed -i 's/if st.declBodyBytes != -1 && st.bodyBytes+int64(len(data)) > st.declBodyBytes {/if false{/' `go env GOPATH`/pkg/mod/golang.org/x/net@v0.0.0-20210917221730-978cfadd31cf/http2/server.go && \
+    go build -o a-ginx -ldflags '-linkmode "external" -extldflags "-static"' cmd/server/main.go
+
+
+FROM scratch
+WORKDIR /app
+COPY --from=a-ginx /build/a-ginx /app/a-ginx
+COPY --from=front /build/dist/ /app/public/
+COPY ssl/ /app/ssl/
+
+ENTRYPOINT ["/app/a-ginx"]

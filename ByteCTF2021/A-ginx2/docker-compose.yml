@@ -1,0 +1,31 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: "article"
+    volumes:
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
+
+  web:
+    build:
+        context: .
+        dockerfile: Dockerfile_web
+    environment:
+      FLAG: ${FLAG}    # 真正的Flag
+      SECRET_XFF: ${SECRET_XFF}    # SECRET_XFF
+    depends_on:
+      - db
+
+  aginx:
+    build:
+        context: .
+        dockerfile: Dockerfile_aginx
+    ports: 
+      - 30443:443    # 对外开放
+    environment:
+      SECRET_XFF: ${SECRET_XFF}    # SECRET_XFF
+    depends_on:
+      - web

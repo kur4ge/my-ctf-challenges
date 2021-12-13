@@ -1,0 +1,16 @@
+FROM golang AS backend
+COPY backend/ /build/
+WORKDIR /build
+
+RUN go env -w GO111MODULE=on && \
+    go env -w GOPROXY=https://goproxy.cn,direct && \
+    go mod download && \
+    go build -o backend -ldflags '-linkmode "external" -extldflags "-static"' cmd/server/main.go
+
+
+FROM scratch
+WORKDIR /app
+COPY --from=backend /build/backend /app/backend
+COPY backend/templates /app/templates
+
+ENTRYPOINT ["/app/backend"]
