@@ -13,6 +13,8 @@ services:
     build:
         context: .
         dockerfile: Dockerfile_web
+    environment:
+      FLAG: ${FLAG}    # 真正的Flag 在.env 中修改
     volumes:
       - "./cache/:/docker-entrypoint-initdb.d/init.sql:ro"
     depends_on:
