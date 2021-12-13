@@ -1,4 +1,4 @@
-FROM node AS front
+FROM node:16 AS front
 COPY front/ /build/
 WORKDIR /build
 
