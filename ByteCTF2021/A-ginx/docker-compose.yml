@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: "article"
+    volumes:
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
+
+  web:
+    build:
+        context: .
+        dockerfile: Dockerfile_web
+    volumes:
+      - "./cache/:/docker-entrypoint-initdb.d/init.sql:ro"
+    depends_on:
+      - db
+
+  aginx:
+    build:
+        context: .
+        dockerfile: Dockerfile_aginx
+    ports: 
+      - 443:443    # 对外开放
+    depends_on:
+      - web
+    volumes:
+      - "./cache/:/app/cache/"
+
+
+  bot:
+    build:
+        context: .
+        dockerfile: Dockerfile_bot
+    ports: 
+      - 9000:9000    # 对外开放 xss bot
+    depends_on:
+      - web
