@@ -1,0 +1,15 @@
+version: '2'
+services:
+  nginx:
+    build: 
+      context: ./nginx
+    ports:
+      - 1337:80
+  web:
+    build: 
+      context: ./web
+  bot:
+    build: 
+      context: ./bot
+    environment:
+      - FLAG=FLAG{test_flag}

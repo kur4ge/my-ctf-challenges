@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Screenshot</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:24px;color:#222}
+    .box{max-width:980px;margin:auto}
+    .url{font-size:14px;color:#374151;margin-bottom:10px;word-break:break-all}
+    .img{border:1px solid #ddd;border-radius:6px;overflow:hidden}
+    a{color:#2f6feb;text-decoration:none}
+  </style>
+  </head>
+<body>
+  <div class="box">
+    <p class="url">Visited: <strong>{{ target }}</strong></p>
+    <div class="img">
+      <img src="data:image/png;base64,{{ image_b64 }}" alt="screenshot" style="max-width:100%;height:auto;display:block">
+    </div>
+    <p><a href="{{ url_for('index') }}">Back</a></p>
+  </div>
+</body>
+</html>
